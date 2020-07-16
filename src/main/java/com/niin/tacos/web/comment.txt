@@ -1,0 +1,3 @@
+We can easily combine class WebConfig into class TacoCloudApplication 
+by implementing method WebMvcConfigurer just like WebConfig init 
+to reduce redundant class also bytecodes, so we can silently delete WebConfig class.
