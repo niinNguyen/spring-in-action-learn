@@ -28,10 +28,24 @@ import com.niin.tacos.data.IngredientRepository;
 public class DesignTacoController {
   
   private final IngredientRepository ingredientRepo;
+  
+  private TacoRepository designRepo;
 
   @Autowired
-  public DesignTacoController(IngredientRepository ingredientRepo) {
+  public DesignTacoController(IngredientRepository ingredientRepo,
+      TacoRepository designRepo) {
     this.ingredientRepo = ingredientRepo;
+    this.designRepo = designRepo;
+  }
+  
+  @ModelAttribute (name = "order")
+  public Order order() {
+    return new Order();
+  }
+  
+  @ModelAttribute (name = "taco")
+  public Taco taco() {
+    return new Taco();
   }
 
   private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
@@ -57,16 +71,18 @@ public class DesignTacoController {
   }
   
    @PostMapping
-   public String processDesign(@Valid @ModelAttribute("design") Taco design, Errors errors, Model model) {
+   public String processDesign(
+       @Valid @ModelAttribute("design") Taco design, Errors errors, 
+       @ModelAttribute Order order) {
      
-     if (errors.hasErrors()) {
+      if (errors.hasErrors()) {
         return "design";
      }
-      // Save the taco design
-      // We'll do this in chapter 3
-     log.info("Processing desgin: " + design);
+      
+      Taco saved = designRepo.save(design);
+      order.addDesign(saved);
  
-     return "redirect:/orders/current";
+      return "redirect:/orders/current";
    }
 }
 
